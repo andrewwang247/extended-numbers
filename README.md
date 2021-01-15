@@ -4,6 +4,8 @@ Adds two points at positive and negative infinity to an existing numeric type. I
 
 The implementation is header-only, so one only needs to put `#include "extended.h"`. Then `Extended<T>` extends the number system given by `T`, which must be a non-`bool` arithmetic type. Namely, `std::is_arithmetic_v<T> == true`. The extension is lightweight, adding only a single byte to the memory footprint of `T`.
 
+To run unit tests and performance benchmarks, compile with the included `Makefile` and execute `benchmark`. The extended numbers class boasts full test coverage.
+
 ## Basic Functionality
 
 An `Extended<T>` type represents all possible values of `T` with the addition of `+inf` and `-inf`. It can be initialized by default (sets to 0), by value (given some `T`), and by specifying the infinity type. The last option uses the `enum class` objects `INF::POS` and `INF::NEG` to represent positive and negative infinity respectively. An existing `Extended<T>` object may also be assigned to via `T`, `INF`, or another `Extended<T>` object.

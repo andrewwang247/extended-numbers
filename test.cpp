@@ -3,81 +3,15 @@ Test for extended numeric types.
 
 Copyright 2020. Siwei Wang.
 */
-#include <exception>
-#include <functional>
-#include <iostream>
+#include "test.h"
 #include <sstream>
 #include <string>
-#include <utility>
 #include <vector>
 #include "extended.h"
-using std::cout;
-using std::exception;
-using std::function;
-using std::ios_base;
-using std::pair;
 using std::string;
 using std::stringstream;
 using std::vector;
 
-namespace test {
-void basic();
-void comparison();
-void unary();
-void add_subtract();
-void multiply_divide();
-void finite_ops();
-void stream();
-}  // namespace test
-
-class test_error : public exception {
- private:
-  const char* msg;
-
- public:
-  explicit test_error(const char* problem) : msg(problem) {}
-  const char* what() const noexcept { return msg; }
-};
-
-int main() {
-  ios_base::sync_with_stdio(false);
-  vector<pair<const char*, const function<void()>>> tests{
-      {"basic functionality", test::basic},
-      {"comparison", test::comparison},
-      {"unary operators", test::unary},
-      {"addition and subtraction", test::add_subtract},
-      {"multiplication and division", test::multiply_divide},
-      {"finite value operations", test::finite_ops},
-      {"stream insertion and extraction", test::stream}};
-  size_t counter = 0;
-  for (const auto& t_name_func : tests) {
-    cout << "Test " << t_name_func.first;
-    bool success = true;
-    try {
-      t_name_func.second();
-    } catch (const test_error& t_err) {
-      success = false;
-      cout << " failed : " << t_err.what() << '\n';
-    } catch (const infinite_error& i_err) {
-      success = false;
-      cout << " failed internally : " << i_err.what() << '\n';
-    } catch (...) {
-      success = false;
-      cout << " failed unexpectedly\n";
-    }
-    if (success) {
-      cout << " succeeded\n";
-      ++counter;
-    }
-  }
-  cout << counter << " out of " << tests.size() << " tests passed!\n";
-}
-
-/**
- * Asserts that predicate is true.
- * THROWS: test_error otherwise.
- * @param predicate The object to assert it true.
- */
 void assert(bool predicate, const char* msg) {
   if (!predicate) throw test_error(msg);
 }
@@ -233,20 +167,24 @@ void test::unary() {
       Extended<char>(43), Extended<char>(INF::POS)};
   for (size_t i = 0; i < nums.size(); ++i) {
     auto num = nums[i];
-    assert(num++ == nums[i], "Postfix increment should return itself.");
+    const auto orig = num++;
+    assert(orig == nums[i], "Postfix increment should return itself.");
     assert(num == nums_pp[i], "Postfix increment should add 1.");
     auto num_2 = nums[i];
-    assert(++num_2 == nums_pp[i], "Prefix increment should return +1.");
+    const auto incr = ++num_2;
+    assert(incr == nums_pp[i], "Prefix increment should return +1.");
   }
   const vector<Extended<char>> nums_mm{
       Extended<char>(INF::NEG), Extended<char>(-43), Extended<char>(-1),
       Extended<char>(41), Extended<char>(INF::POS)};
   for (size_t i = 0; i < nums.size(); ++i) {
     auto num = nums[i];
-    assert(num-- == nums[i], "Postfix increment should return itself.");
+    const auto orig = num--;
+    assert(orig == nums[i], "Postfix increment should return itself.");
     assert(num == nums_mm[i], "Postfix increment should add 1.");
     auto num_2 = nums[i];
-    assert(--num_2 == nums_mm[i], "Prefix increment should return +1.");
+    const auto decr = --num_2;
+    assert(decr == nums_mm[i], "Prefix increment should return +1.");
   }
 }
 

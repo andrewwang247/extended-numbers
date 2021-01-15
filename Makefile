@@ -5,7 +5,7 @@ OPT := -O3 -DNDEBUG
 DEBUG := -g3 -DDEBUG
 
 # Executable name and linked files without extensions.
-EXE := test
+EXE := benchmark
 
 # Link all cpp files that are not the executable. 
 LINKED_CPP := $(filter-out $(EXE).cpp, $(wildcard *.cpp))
